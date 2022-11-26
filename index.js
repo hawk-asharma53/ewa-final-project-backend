@@ -8,6 +8,7 @@ import products from './products.js';
 import services from './services.js';
 import addresses from './addresses.js';
 import stores from './stores.js';
+import orders from './orders.js';
 import bodyParser from 'body-parser';
 import config from './config/db.config.js';
 
@@ -48,6 +49,7 @@ app.listen(NODE_PORT, (_request, _response) => {
       services(app);
       stores(app);
       addresses(app);
+      orders(app);
     }
   });
 });
