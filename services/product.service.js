@@ -14,10 +14,52 @@ async function getAll() {
         },
       );
       connection.end();
-    } catch (error) {}
+    } catch (error) {
+      reject(error)
+    }
   });
 }
 
-var productService = { getAll }
+async function getByIds( ids ) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'Select * from products where id in (?)',
+        [ ids ],
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results)
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error)
+    }
+  });
+}
+
+async function getByCategory( category_id ) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'Select * from products where categoryid = ?',
+        [category_id],
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results)
+        },
+      );
+      connection.end();
+    } catch (error) {      
+      reject(error)
+    }
+  });
+}
+
+var productService = { getAll, getByIds, getByCategory }
 
 export default productService;
