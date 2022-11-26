@@ -5,6 +5,7 @@ import { createConnection } from 'mysql2';
 import cors from 'cors';
 import users from './users.js';
 import products from './products.js';
+import services from './services.js';
 import bodyParser from 'body-parser';
 import config from './config/db.config.js';
 
@@ -42,6 +43,7 @@ app.listen(NODE_PORT, (_request, _response) => {
       console.log('HomeVerse SQL is up');
       // users(app, executeMySqlQuery);
       products(app);
+      services(app);
     }
   });
 });
