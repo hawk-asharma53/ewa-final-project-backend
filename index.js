@@ -42,7 +42,7 @@ app.listen(NODE_PORT, (_request, _response) => {
       throw error;
     } else {
       console.log('HomeVerse SQL is up');
-      // users(app, executeMySqlQuery);
+      users(app, executeMySqlQuery);
       products(app);
       services(app);
       stores(app);
