@@ -1,10 +1,14 @@
 import express from 'express';
 import { request, response } from 'express';
 import morgan from 'morgan';
-import { createConnection } from 'mysql';
+import { createConnection } from 'mysql2';
 import cors from 'cors';
 import users from './users.js';
+import products from './products.js';
+import services from './services.js';
+import stores from './stores.js';
 import bodyParser from 'body-parser';
+import config from './config/db.config.js';
 
 const app = express();
 const corsOptions = {
@@ -24,12 +28,7 @@ let NODE_MONGO_CONNECTION;
 
 app.listen(NODE_PORT, (_request, _response) => {
   console.log('HomeVerse Server is up');
-  NODE_SQL_CONNECTION = createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'homeverse_database',
-  });
+  NODE_SQL_CONNECTION = createConnection(config);
 
   const executeMySqlQuery = (query, parameters, callback) => {
     NODE_SQL_CONNECTION.query(query, parameters, (error, rows, fields) =>
@@ -43,7 +42,10 @@ app.listen(NODE_PORT, (_request, _response) => {
       throw error;
     } else {
       console.log('HomeVerse SQL is up');
-      users(app, executeMySqlQuery);
+      // users(app, executeMySqlQuery);
+      products(app);
+      services(app);
+      stores(app);
     }
   });
 });
