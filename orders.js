@@ -4,6 +4,16 @@ import orderItemService from "./services/orderItem.service.js";
 
 const BASE_URL = '/api';
 const PLACE_ORDER = BASE_URL + '/placeOrder';
+const GET_ORDER_BY_IDS = BASE_URL + '/orderById';
+const GET_ORDER_BY_STORE = BASE_URL + '/orderByStore/:storeId';
+const GET_ORDER_BY_USER = BASE_URL + '/orderByUser/:userId';
+
+async function addItemsToOrder( orders ) {
+    for (let index = 0; index < orders.length; index++) {
+        const element = orders[index];
+        element.orderItems = await orderItemService.getByOrderId(element.id)
+    }
+}
 
 export default function (app) {
     app.post(PLACE_ORDER, async (request, response) => {
@@ -24,5 +34,38 @@ export default function (app) {
             await orderItemService.addOrderItem(element);
         }
         response.status(200).json(buildResponse(id)).end();
+    });
+
+    app.post(GET_ORDER_BY_IDS, async (request, response) => {
+        const ids = request.body;
+        if ( !Array.isArray(ids) ) {
+            response.status(400).json(buildResponse(null, 'Invalid input')).end()
+            return
+        }
+        var orders = await orderService.getByIds(ids);
+        await addItemsToOrder(orders);
+        response.status(200).json(buildResponse(orders)).end()
+    });
+
+    app.get(GET_ORDER_BY_STORE, async (request, response) => {
+        const storeId = request.params.storeId;
+        if ( isNaN(storeId) ) {
+            response.status(400).json(buildResponse(null, 'Invalid store Id')).end()
+            return
+        }
+        var orders = await orderService.getByStore(storeId);
+        await addItemsToOrder(orders);
+        response.status(200).json(buildResponse(orders)).end();
+    });
+
+    app.get(GET_ORDER_BY_USER, async (request, response) => {
+        const userId = request.params.userId;
+        if ( isNaN(userId) ) {
+            response.status(400).json(buildResponse(null, 'Invalid user Id')).end()
+            return
+        }
+        var orders = await orderService.getByUser(userId);
+        await addItemsToOrder(orders);
+        response.status(200).json(buildResponse(orders)).end();
     });
 }
