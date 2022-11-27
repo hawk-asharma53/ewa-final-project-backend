@@ -6,7 +6,9 @@ import cors from 'cors';
 import users from './users.js';
 import products from './products.js';
 import services from './services.js';
+import addresses from './addresses.js';
 import stores from './stores.js';
+import orders from './orders.js';
 import bodyParser from 'body-parser';
 import config from './config/db.config.js';
 
@@ -46,6 +48,8 @@ app.listen(NODE_PORT, (_request, _response) => {
       products(app);
       services(app);
       stores(app);
+      addresses(app);
+      orders(app);
     }
   });
 });
