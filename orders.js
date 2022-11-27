@@ -7,6 +7,7 @@ const PLACE_ORDER = BASE_URL + '/placeOrder';
 const GET_ORDER_BY_IDS = BASE_URL + '/orderById';
 const GET_ORDER_BY_STORE = BASE_URL + '/orderByStore/:storeId';
 const GET_ORDER_BY_USER = BASE_URL + '/orderByUser/:userId';
+const UPDATE_ORDER_STATUS = BASE_URL + '/updateUserStatus';
 
 async function addItemsToOrder( orders ) {
     for (let index = 0; index < orders.length; index++) {
@@ -67,5 +68,16 @@ export default function (app) {
         var orders = await orderService.getByUser(userId);
         await addItemsToOrder(orders);
         response.status(200).json(buildResponse(orders)).end();
+    });
+
+    app.post(UPDATE_ORDER_STATUS, async (request, response) => {
+        const orderId = request.body.orderId;
+        const status = request.body.status;
+        if ( orderId == null && isNaN(orderId) && status == null ) {
+            response.status(400).json(buildResponse(null, 'Invalid input')).end()
+            return
+        }
+        var isSuccess = await orderService.updateOrderStatus(orderId, status);
+        response.status(200).json(buildResponse(isSuccess)).end()
     });
 }
