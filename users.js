@@ -90,6 +90,7 @@ export default function (app, executeMySqlQuery) {
             message:
               'An error occured while creating the account. Please try again later.',
           };
+          console.log(error);
           response.status(statusCode).json(nodeResponse).end();
         } else {
           if (selectRows.length > 0) {
@@ -110,6 +111,7 @@ export default function (app, executeMySqlQuery) {
                     message:
                       'An error occured while creating the account. Please try again later.',
                   };
+                  console.log(error);
                   response.status(statusCode).json(nodeResponse).end();
                 } else {
                   nodeResponse.data = {
