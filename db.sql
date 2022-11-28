@@ -2,7 +2,6 @@ Db Scripts
 
 
 use development;
-drop table if exists addresses;
 CREATE TABLE `addresses` (
 	`id` varchar(40) NOT NULL PRIMARY KEY,
     	`userId` int,
@@ -13,7 +12,6 @@ CREATE TABLE `addresses` (
 );
 
 use development;
-drop table if exists orders;
 CREATE TABLE `orders` (
 	`id` varchar(100) NOT NULL PRIMARY KEY,
 	`userId` int,
@@ -47,5 +45,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`user_id`)
 );
 
+ALTER TABLE services MODIFY id varchar(100)
 
+ALTER TABLE orders ADD address int;
 

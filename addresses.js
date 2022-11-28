@@ -1,4 +1,4 @@
-import buildResponse from "./helper.functions.js";
+import {buildResponse} from "./helper.functions.js";
 import addressService from "./services/address.service.js";
 
 const BASE_URL = '/api';
