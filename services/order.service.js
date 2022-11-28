@@ -9,7 +9,7 @@ async function addOrder(order) {
       connection.connect();
       var id = uuidv4();
       connection.query(
-        'Insert into orders values (?,?,?,?,?,?,?,?, null)',
+        'Insert into orders values (?,?,?,?,?,?,?,?,null,?)',
         [
           id,
           order.userId,
@@ -19,6 +19,7 @@ async function addOrder(order) {
           order.paymentId,
           order.type,
           order.orderDate,
+          order.address,
         ],
         function (error, results, fields) {
           if (error) throw error;
