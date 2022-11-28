@@ -1,27 +1,25 @@
-import e from "cors"
+import e from 'cors';
+import axios from'axios';
 
-export function buildResponse ( data, error = null ) {
-    if (data) 
-        return { data, error }
-    else 
-        return { data, error : { message : error } }
+function degreesToRadians(degrees) {
+  var radians = (degrees * Math.PI) / 180;
+  return radians;
 }
 
-export function calcDistance (startingCoords, destinationCoords){
-    let startingLat = degreesToRadians(startCoords.latitude);
-    let startingLong = degreesToRadians(startCoords.longitude);
-    let destinationLat = degreesToRadians(destCoords.latitude);
-    let destinationLong = degreesToRadians(destCoords.longitude);
-  
-    // Radius of the Earth in kilometers
-    let radius = 6571;
-  
-    // Haversine equation
-    let distanceInKilometers = Math.acos(Math.sin(startingLat) * Math.sin(destinationLat) +
-    Math.cos(startingLat) * Math.cos(destinationLat) *
-    Math.cos(startingLong - destinationLong)) * radius;
-    
-    return distanceInKilometers;
+export function buildResponse(data, error = null) {
+  if (data) return { data, error };
+  else return { data, error: { message: error } };
 }
 
-//  default buildResponse;
+export async function calcDistance(startCoords, destCoords) {
+    var url = 'https://maps.googleapis.com/maps/api/distancematrix/json';
+    var params = '';
+    params += `origins=${startCoords.lat},${startCoords.lng}&`
+    params += `destinations=${destCoords.lat},${destCoords.lng}&`
+    params += `units=imperial&`
+    params += `key=AIzaSyBX5MrMufpjy1E8EPZpQ2cmgpdpVs-fGgU`
+    url = `${url}?${params}`
+    var headers = { 'Accept': 'application/json', 'Accept-Encoding': 'identity' }
+    var response = await axios({ url, method : 'get', headers });
+    return response.data.rows[0].elements[0].distance;
+}
