@@ -2,7 +2,19 @@ import config from '../config/db.config.js';
 import { createConnection } from 'mysql2';
 import { v4 as uuidv4 } from 'uuid';
 
-const ongoingStatuses = ["Processing","Packaging","Ready for pickup","Out for Delivery"]
+const ongoingStatuses = [
+  'Processing',
+  'Packaging',
+  'Ready for pickup',
+  'Out for Delivery',
+];
+const revenueStatuses = [
+  'Processing',
+  'Packaging',
+  'Ready for pickup',
+  'Out for Delivery',
+  'Completed',
+];
 
 async function addOrder(order) {
   return new Promise((resolve, reject) => {
@@ -55,107 +67,157 @@ async function updateOrderStatus(orderId, status) {
   });
 }
 
-async function getByIds( ids ) {
+async function getByIds(ids) {
   return new Promise((resolve, reject) => {
     try {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
         'Select * from orders where id in (?)',
-        [ ids ],
+        [ids],
         function (error, results, fields) {
           if (error) throw error;
-          resolve(results)
+          resolve(results);
         },
       );
       connection.end();
     } catch (error) {
-      reject(error)
+      reject(error);
     }
   });
 }
 
-async function getByStore( storeId ) {
+async function getByStore(storeId) {
   return new Promise((resolve, reject) => {
     try {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
         'Select * from orders where storeId = ?',
-        [ storeId ],
+        [storeId],
         function (error, results, fields) {
           if (error) throw error;
-          resolve(results)
+          resolve(results);
         },
       );
       connection.end();
     } catch (error) {
-      reject(error)
+      reject(error);
     }
   });
 }
 
-async function getByUser( userId ) {
+async function getByUser(userId) {
   return new Promise((resolve, reject) => {
     try {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
         'Select * from orders where userId = ?',
-        [ userId ],
+        [userId],
         function (error, results, fields) {
           if (error) throw error;
-          resolve(results)
+          resolve(results);
         },
       );
       connection.end();
     } catch (error) {
-      reject(error)
+      reject(error);
     }
   });
 }
 
-async function getOverallOngoingOrders(  ) {
+async function getOverallOngoingOrders() {
   return new Promise((resolve, reject) => {
     try {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
-        "Select * from orders where status in (?)",
+        'Select * from orders where status in (?)',
         [ongoingStatuses],
         function (error, results, fields) {
           if (error) throw error;
-          resolve(results)
+          resolve(results);
         },
       );
       connection.end();
     } catch (error) {
-      reject(error)
+      reject(error);
     }
   });
 }
 
-async function getOngoingOrdersForDates( startDate, endDate ) {
+async function getOverallOngoingOrdersByStore(storeId) {
   return new Promise((resolve, reject) => {
     try {
-      console.log(startDate)
       var connection = createConnection(config);
       connection.connect();
       connection.query(
-        "Select * from orders where status in (?) and orderDate between ? and ?",
-        [ongoingStatuses, startDate, endDate],
+        'Select * from orders where status in (?) and storeId = ?',
+        [ongoingStatuses, storeId],
         function (error, results, fields) {
           if (error) throw error;
-          resolve(results)
+          resolve(results);
         },
       );
       connection.end();
     } catch (error) {
-      reject(error)
+      reject(error);
     }
   });
 }
 
-var orderService = { addOrder, updateOrderStatus, getByIds, getByStore, getByUser, getOverallOngoingOrders, getOngoingOrdersForDates };
+async function getOngoingOrdersForDates(startDate, endDate) {
+  return new Promise((resolve, reject) => {
+    try {
+      console.log(startDate);
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'Select * from orders where status in (?) and orderDate between ? and ?',
+        [ongoingStatuses, startDate, endDate],
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function getTotalRevenueForDate(startDate, endDate) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'Select sum(total) from orders where status in (?) and orderDate between ? and ?',
+        [revenueStatuses, startDate, endDate],
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+var orderService = {
+  addOrder,
+  updateOrderStatus,
+  getByIds,
+  getByStore,
+  getByUser,
+  getOverallOngoingOrders,
+  getOverallOngoingOrdersByStore,
+  getOngoingOrdersForDates,
+  getTotalRevenueForDate
+};
 
 export default orderService;

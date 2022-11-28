@@ -7,6 +7,8 @@ const PLACE_ORDER = BASE_URL + '/placeOrder';
 const GET_ORDER_BY_IDS = BASE_URL + '/orderById';
 const GET_ORDER_BY_STORE = BASE_URL + '/orderByStore/:storeId';
 const GET_ORDER_BY_USER = BASE_URL + '/orderByUser/:userId';
+const GET_ONGOING_ORDER = BASE_URL + '/ongoingOrders';
+const GET_ONGOING_ORDER_BY_STORE = BASE_URL + '/ongoingOrders/:storeId';
 const UPDATE_ORDER_STATUS = BASE_URL + '/updateOrderStatus';
 
 async function addItemsToOrder( orders ) {
@@ -66,6 +68,23 @@ export default function (app) {
             return
         }
         var orders = await orderService.getByUser(userId);
+        await addItemsToOrder(orders);
+        response.status(200).json(buildResponse(orders)).end();
+    });
+
+    app.get(GET_ONGOING_ORDER, async (request, response) => {
+        var orders = await orderService.getOverallOngoingOrders();
+        await addItemsToOrder(orders);
+        response.status(200).json(buildResponse(orders)).end();
+    });
+
+    app.get(GET_ONGOING_ORDER_BY_STORE, async (request, response) => {
+        const storeId = request.params.storeId;
+        if ( isNaN(storeId) ) {
+            response.status(400).json(buildResponse(null, 'Invalid store Id')).end()
+            return
+        }
+        var orders = await orderService.getOverallOngoingOrdersByStore( storeId );
         await addItemsToOrder(orders);
         response.status(200).json(buildResponse(orders)).end();
     });

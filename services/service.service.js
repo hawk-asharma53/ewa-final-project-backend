@@ -60,6 +60,6 @@ async function getByCategory( category_id ) {
   });
 }
 
-var productService = { getAll, getByIds, getByCategory }
+var serviceService = { getAll, getByIds, getByCategory }
 
-export default productService;
+export default serviceService;
