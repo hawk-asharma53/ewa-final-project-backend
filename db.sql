@@ -49,3 +49,5 @@ ALTER TABLE services MODIFY id varchar(100)
 
 ALTER TABLE orders ADD address int;
 
+create view WeeklyRevenue as
+select week(orderDate) as week , storeId,avg(total) as total from orders group by week(orderDate), storeId;

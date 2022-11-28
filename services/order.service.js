@@ -208,6 +208,45 @@ async function getTotalRevenueForDate(startDate, endDate) {
   });
 }
 
+async function getWeeklyRevenue() {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'select week, sum(total) from WeeklyRevenue group by week',
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function getWeeklyRevenueByStore(storeId) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'select week, total from WeeklyRevenue where storeId = ?',
+        [storeId],
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 var orderService = {
   addOrder,
   updateOrderStatus,
@@ -217,7 +256,9 @@ var orderService = {
   getOverallOngoingOrders,
   getOverallOngoingOrdersByStore,
   getOngoingOrdersForDates,
-  getTotalRevenueForDate
+  getTotalRevenueForDate,
+  getWeeklyRevenue,
+  getWeeklyRevenueByStore
 };
 
 export default orderService;
