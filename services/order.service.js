@@ -2,6 +2,8 @@ import config from '../config/db.config.js';
 import { createConnection } from 'mysql2';
 import { v4 as uuidv4 } from 'uuid';
 
+const ongoingStatuses = ["Processing","Packaging","Ready for pickup","Out for Delivery"]
+
 async function addOrder(order) {
   return new Promise((resolve, reject) => {
     try {
@@ -113,6 +115,47 @@ async function getByUser( userId ) {
   });
 }
 
-var orderService = { addOrder, updateOrderStatus, getByIds, getByStore, getByUser };
+async function getOverallOngoingOrders(  ) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        "Select * from orders where status in (?)",
+        [ongoingStatuses],
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results)
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error)
+    }
+  });
+}
+
+async function getOngoingOrdersForDates( startDate, endDate ) {
+  return new Promise((resolve, reject) => {
+    try {
+      console.log(startDate)
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        "Select * from orders where status in (?) and orderDate between ? and ?",
+        [ongoingStatuses, startDate, endDate],
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results)
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error)
+    }
+  });
+}
+
+var orderService = { addOrder, updateOrderStatus, getByIds, getByStore, getByUser, getOverallOngoingOrders, getOngoingOrdersForDates };
 
 export default orderService;
