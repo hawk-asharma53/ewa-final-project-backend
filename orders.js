@@ -1,4 +1,4 @@
-import {buildResponse} from "./helper.functions.js";
+import { buildResponse } from "./helper.functions.js";
 import orderService from "./services/order.service.js";
 import orderItemService from "./services/orderItem.service.js";
 
@@ -7,7 +7,11 @@ const PLACE_ORDER = BASE_URL + '/placeOrder';
 const GET_ORDER_BY_IDS = BASE_URL + '/orderById';
 const GET_ORDER_BY_STORE = BASE_URL + '/orderByStore/:storeId';
 const GET_ORDER_BY_USER = BASE_URL + '/orderByUser/:userId';
+const GET_ONGOING_ORDER = BASE_URL + '/ongoingOrders';
+const GET_ONGOING_ORDER_BY_STORE = BASE_URL + '/ongoingOrders/:storeId';
 const UPDATE_ORDER_STATUS = BASE_URL + '/updateOrderStatus';
+const GET_WEEKLY_REVENUE = BASE_URL + '/weekelyRevenue';
+const GET_WEEKLY_REVENUE_BY_STORE = BASE_URL + '/weekelyRevenue/:storeId';
 
 async function addItemsToOrder( orders ) {
     for (let index = 0; index < orders.length; index++) {
@@ -70,6 +74,23 @@ export default function (app) {
         response.status(200).json(buildResponse(orders)).end();
     });
 
+    app.get(GET_ONGOING_ORDER, async (request, response) => {
+        var orders = await orderService.getOverallOngoingOrders();
+        await addItemsToOrder(orders);
+        response.status(200).json(buildResponse(orders)).end();
+    });
+
+    app.get(GET_ONGOING_ORDER_BY_STORE, async (request, response) => {
+        const storeId = request.params.storeId;
+        if ( isNaN(storeId) ) {
+            response.status(400).json(buildResponse(null, 'Invalid store Id')).end()
+            return
+        }
+        var orders = await orderService.getOverallOngoingOrdersByStore( storeId );
+        await addItemsToOrder(orders);
+        response.status(200).json(buildResponse(orders)).end();
+    });
+
     app.post(UPDATE_ORDER_STATUS, async (request, response) => {
         const orderId = request.body.orderId;
         const status = request.body.status;
@@ -79,5 +100,20 @@ export default function (app) {
         }
         var isSuccess = await orderService.updateOrderStatus(orderId, status);
         response.status(200).json(buildResponse(isSuccess)).end()
+    });
+
+    app.get(GET_WEEKLY_REVENUE, async (request, response) => {
+        var revenue = await orderService.getWeeklyRevenue();
+        response.status(200).json(buildResponse(revenue)).end()
+    });
+
+    app.get(GET_WEEKLY_REVENUE_BY_STORE, async (request, response) => {
+        const storeId = request.params.storeId;
+        if ( isNaN(storeId) ) {
+            response.status(400).json(buildResponse(null, 'Invalid store Id')).end()
+            return
+        }
+        var revenue = await orderService.getWeeklyRevenueByStore(storeId);
+        response.status(200).json(buildResponse(revenue)).end()
     });
 }

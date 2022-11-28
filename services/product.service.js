@@ -91,6 +91,45 @@ async function createProduct(product) {
   });
 }
 
-var productService = { getAll, getByIds, getByCategory, createProduct }
+async function getProductCount( ) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'select title, id, sum(quantity) as quantity from ProductCount group by id',
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results)
+        },
+      );
+      connection.end();
+    } catch (error) {      
+      reject(error)
+    }
+  });
+}
+
+async function getProductCountByStore( storeId ) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'select title, id, quantity from ProductCount where storeId = ?',
+        [storeId],
+        function (error, results, fields) {
+          if (error) throw error;
+          resolve(results)
+        },
+      );
+      connection.end();
+    } catch (error) {      
+      reject(error)
+    }
+  });
+}
+
+var productService = { getAll, getByIds, getByCategory, createProduct, getProductCount, getProductCountByStore }
 
 export default productService;
