@@ -51,3 +51,17 @@ ALTER TABLE orders ADD address int;
 
 create view WeeklyRevenue as
 select week(orderDate) as week , storeId,avg(total) as total from orders group by week(orderDate), storeId;
+
+Create view ProductCount as
+select p.title, p.id, a.quantity, a.storeId  from
+(select oi.itemId, sum(oi.quantity) as quantity, o.storeId  from orderItem oi
+Left Join orders o on oi.orderId = o.id
+Group by o.storeId, oi.itemId) as a
+Inner Join products p on a.itemId = p.id
+
+Create view ServiceCount as
+select s.title, s.id, a.quantity, a.storeId  from
+(select oi.itemId, sum(oi.quantity) as quantity, o.storeId  from orderItem oi
+Left Join orders o on oi.orderId = o.id
+Group by o.storeId, oi.itemId) as a
+Inner Join services s on a.itemId = s.id
