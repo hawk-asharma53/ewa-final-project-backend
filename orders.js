@@ -7,7 +7,7 @@ const PLACE_ORDER = BASE_URL + '/placeOrder';
 const GET_ORDER_BY_IDS = BASE_URL + '/orderById';
 const GET_ORDER_BY_STORE = BASE_URL + '/orderByStore/:storeId';
 const GET_ORDER_BY_USER = BASE_URL + '/orderByUser/:userId';
-const UPDATE_ORDER_STATUS = BASE_URL + '/updateUserStatus';
+const UPDATE_ORDER_STATUS = BASE_URL + '/updateOrderStatus';
 
 async function addItemsToOrder( orders ) {
     for (let index = 0; index < orders.length; index++) {
