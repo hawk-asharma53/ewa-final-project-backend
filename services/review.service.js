@@ -5,7 +5,7 @@ async function addReview(review) {
   return new Promise( async (resolve, reject) => {
     var client = new MongoClient(mongoConfig.connectionString);
     try {
-      var reviewsCollection = client.db("test").collection("reviews");
+      var reviewsCollection = client.db(mongoConfig.dbName).collection("reviews");
       await reviewsCollection.insertOne( review );
       resolve();
     } catch (error) {
@@ -20,7 +20,7 @@ async function findReviews( query ) {
   return new Promise( async (resolve, reject) => {
     var client = new MongoClient(mongoConfig.connectionString);
     try {
-      var reviewsCollection = client.db("test").collection("reviews");
+      var reviewsCollection = client.db(mongoConfig.dbName).collection("reviews");
       var cursor = reviewsCollection.find( query );
       var reviews = [];
       await cursor.forEach((item) => { reviews.push(item) });
