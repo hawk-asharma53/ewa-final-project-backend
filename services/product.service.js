@@ -10,7 +10,7 @@ async function getAll() {
       connection.query(
         'Select * from products',
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
@@ -30,7 +30,7 @@ async function getByIds( ids ) {
         'Select * from products where id in (?)',
         [ ids ],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
@@ -50,7 +50,7 @@ async function getByCategory( category_id ) {
         'Select * from products where categoryid = ?',
         [category_id],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
@@ -80,7 +80,7 @@ async function createProduct(product) {
           product.isActivew
         ],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(id);
         },
       );
@@ -99,7 +99,7 @@ async function getProductCount( ) {
       connection.query(
         'select title, id, sum(quantity) as quantity from ProductCount group by id',
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
@@ -119,7 +119,7 @@ async function getProductCountByStore( storeId ) {
         'select title, id, quantity from ProductCount where storeId = ?',
         [storeId],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );

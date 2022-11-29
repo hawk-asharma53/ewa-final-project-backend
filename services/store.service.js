@@ -9,7 +9,7 @@ async function getAll() {
       connection.query(
         'Select * from stores',
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
@@ -29,7 +29,7 @@ async function getByIds( ids ) {
         'Select * from stores where id in (?)',
         [ ids ],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );

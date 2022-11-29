@@ -1,6 +1,3 @@
-Db Scripts
-
-
 use development;
 CREATE TABLE `addresses` (
 	`id` varchar(40) NOT NULL PRIMARY KEY,
@@ -45,9 +42,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`user_id`)
 );
 
-ALTER TABLE services MODIFY id varchar(100)
-
-ALTER TABLE orders ADD address int;
+ALTER TABLE orders MODIFY storeId varchar(100);
 
 create view WeeklyRevenue as
 select week(orderDate) as week , storeId,avg(total) as total from orders group by week(orderDate), storeId;
