@@ -12,6 +12,7 @@ import orders from './orders.js';
 import bodyParser from 'body-parser';
 import config from './config/db.config.js';
 import dashboard from './dashboard.js';
+import reviews from './reviews.js';
 
 const app = express();
 const corsOptions = {
@@ -52,6 +53,7 @@ app.listen(NODE_PORT, (_request, _response) => {
       addresses(app);
       orders(app);
       dashboard(app);
+      reviews(app);
     }
   });
 });
