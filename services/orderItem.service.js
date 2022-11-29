@@ -10,7 +10,7 @@ async function addOrderItem(orderItem) {
         'Insert into orderItem values (?,?,?)',
         [orderItem.orderId, orderItem.itemId, orderItem.quantity],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve();
         },
       );
@@ -30,7 +30,7 @@ async function getByOrderId(orderId) {
         'Select * from orderItem where orderId = ?',
         [orderId],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );

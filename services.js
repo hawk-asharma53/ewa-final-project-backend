@@ -10,42 +10,62 @@ const GET_SOLD_SERVICE_COUNT_BY_STORE = BASE_URL + '/serviceCount/:storeId';
 
 export default function (app) {
     app.get(GET_ALL_SERVICES, async (request, response) => {
-        var services = await serviceService.getAll();
-        response.status(200).json(buildResponse(services)).end()
+        try {
+            var services = await serviceService.getAll();
+            response.status(200).json(buildResponse(services)).end()
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
+        }
     });
 
     app.post(GET_SERVICES_BY_IDS, async (request, response) => {
-        const ids = request.body;
-        if ( !Array.isArray(ids) ) {
-            response.status(400).json(buildResponse(null, 'Invalid input')).end()
-            return
+        try {
+            const ids = request.body;
+            if ( !Array.isArray(ids) ) {
+                response.status(400).json(buildResponse(null, 'Invalid input')).end()
+                return
+            }
+            var services = await serviceService.getByIds(ids);
+            response.status(200).json(buildResponse(services)).end()
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
         }
-        var services = await serviceService.getByIds(ids);
-        response.status(200).json(buildResponse(services)).end()
     });
 
     app.get(GET_SERVICES_BY_CATEGORY, async (request, response) => {
-        const catgoryId = request.params.catgoryId;
-        if ( isNaN(catgoryId) ) {
-            response.status(400).json(buildResponse(null, 'Invalid category Id')).end()
-            return
+        try {
+            const catgoryId = request.params.catgoryId;
+            if ( isNaN(catgoryId) ) {
+                response.status(400).json(buildResponse(null, 'Invalid category Id')).end()
+                return
+            }
+            var services = await serviceService.getByCategory(catgoryId);
+            response.status(200).json(buildResponse(services)).end()
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
         }
-        var services = await serviceService.getByCategory(catgoryId);
-        response.status(200).json(buildResponse(services)).end()
     });
 
     app.get(GET_SOLD_SERVICE_COUNT, async (request, response) => {
-        var serviceCount = await serviceService.getServiceCount();
-        response.status(200).json(buildResponse(serviceCount)).end()
+        try {
+            var serviceCount = await serviceService.getServiceCount();
+            response.status(200).json(buildResponse(serviceCount)).end()
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
+        }
     });
 
     app.get(GET_SOLD_SERVICE_COUNT_BY_STORE, async (request, response) => {
-        const storeId = request.params.storeId;
-        if ( isNaN(storeId) ) {
-            response.status(400).json(buildResponse(null, 'Invalid store Id')).end()
-            return
+        try {
+            const storeId = request.params.storeId;
+            if ( isNaN(storeId) ) {
+                response.status(400).json(buildResponse(null, 'Invalid store Id')).end()
+                return
+            }
+            var serviceCount = await serviceService.getServiceCountByStore(storeId);
+            response.status(200).json(buildResponse(serviceCount)).end()
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
         }
-        var serviceCount = await serviceService.getServiceCountByStore(storeId);
-        response.status(200).json(buildResponse(serviceCount)).end()
     });
 }

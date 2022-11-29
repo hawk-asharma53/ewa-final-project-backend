@@ -36,7 +36,7 @@ async function addOrder(order) {
           order.address,
         ],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(id);
         },
       );
@@ -56,7 +56,7 @@ async function updateOrderStatus(orderId, status) {
         'Update orders set status = ? where id = ?',
         [status, orderId],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(true);
         },
       );
@@ -76,7 +76,7 @@ async function getByIds(ids) {
         'Select * from orders where id in (?)',
         [ids],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );
@@ -96,7 +96,7 @@ async function getByStore(storeId) {
         'Select * from orders where storeId = ?',
         [storeId],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );
@@ -116,7 +116,7 @@ async function getByUser(userId) {
         'Select * from orders where userId = ?',
         [userId],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );
@@ -136,7 +136,7 @@ async function getOverallOngoingOrders() {
         'Select * from orders where status in (?)',
         [ongoingStatuses],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );
@@ -156,7 +156,7 @@ async function getOverallOngoingOrdersByStore(storeId) {
         'Select * from orders where status in (?) and storeId = ?',
         [ongoingStatuses, storeId],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );
@@ -177,7 +177,7 @@ async function getOngoingOrdersForDates(startDate, endDate) {
         'Select * from orders where status in (?) and orderDate between ? and ?',
         [ongoingStatuses, startDate, endDate],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );
@@ -197,7 +197,7 @@ async function getTotalRevenueForDate(startDate, endDate) {
         'Select sum(total) from orders where status in (?) and orderDate between ? and ?',
         [revenueStatuses, startDate, endDate],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );
@@ -214,9 +214,9 @@ async function getWeeklyRevenue() {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
-        'select week, sum(total) from WeeklyRevenue group by week',
+        'select week, sum(total) from WeeklyRevenue group by week order by week',
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );
@@ -233,10 +233,10 @@ async function getWeeklyRevenueByStore(storeId) {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
-        'select week, total from WeeklyRevenue where storeId = ?',
+        'select week, total from WeeklyRevenue where storeId = ? order by week',
         [storeId],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );

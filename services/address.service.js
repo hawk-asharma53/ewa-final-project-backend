@@ -19,7 +19,7 @@ async function addAddress(address) {
           address.zipcodde,
         ],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(id);
         },
       );
@@ -39,7 +39,7 @@ async function getByIds(ids) {
         'Select * from addresses where id in (?)',
         [ids],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );
@@ -59,7 +59,7 @@ async function getByUser(userId) {
         'Select * from addresses where userId = ?',
         [userId],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results);
         },
       );

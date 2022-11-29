@@ -9,28 +9,40 @@ const GET_ADDRESS_BY_USER = BASE_URL + '/addressByUser/:userId';
 export default function (app) {
 
     app.post(ADDRESS, async (request, response) => {
-        const address = request.body;
-        var id = await addressService.addAddress(address)
-        response.status(200).json(buildResponse(id)).end()
+        try {
+            const address = request.body;
+            var id = await addressService.addAddress(address)
+            response.status(200).json(buildResponse(id)).end()
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
+        }
     });
 
     app.post(GET_ADDRESS_BY_IDS, async (request, response) => {
-        const ids = request.body;
-        if ( !Array.isArray(ids) ) {
-            response.status(400).json(buildResponse(null, 'Invalid input')).end()
-            return
+        try {
+            const ids = request.body;
+            if ( !Array.isArray(ids) ) {
+                response.status(400).json(buildResponse(null, 'Invalid input')).end()
+                return
+            }
+            var address = await addressService.getByIds(ids);
+            response.status(200).json(buildResponse(address)).end()
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
         }
-        var address = await addressService.getByIds(ids);
-        response.status(200).json(buildResponse(address)).end()
     });
 
     app.get(GET_ADDRESS_BY_USER, async (request, response) => {
-        const userId = request.params.userId;
-        if ( isNaN(userId) ) {
-            response.status(400).json(buildResponse(null, 'Invalid user id')).end()
-            return
+        try {
+            const userId = request.params.userId;
+            if ( isNaN(userId) ) {
+                response.status(400).json(buildResponse(null, 'Invalid user id')).end()
+                return
+            }
+            var address = await addressService.getByUser(userId);
+            response.status(200).json(buildResponse(address)).end()
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
         }
-        var address = await addressService.getByUser(userId);
-        response.status(200).json(buildResponse(address)).end()
     });
 }

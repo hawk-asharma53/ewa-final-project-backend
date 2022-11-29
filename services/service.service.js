@@ -9,7 +9,7 @@ async function getAll() {
       connection.query(
         'Select * from services',
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
@@ -29,7 +29,7 @@ async function getByIds( ids ) {
         'Select * from services where id in (?)',
         [ ids ],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
@@ -49,7 +49,7 @@ async function getByCategory( category_id ) {
         'Select * from services where categoryid = ?',
         [category_id],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
@@ -70,7 +70,7 @@ async function getServiceCount( ) {
         (select itemId, sum(quantity) as quantity  from ServiceCount sc group by itemId) as a
         inner join services s on s.id = a.itemId`,
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
@@ -92,7 +92,7 @@ async function getServiceCountByStore( storeId ) {
         inner join services s on s.id = a.itemId`,
         [storeId],
         function (error, results, fields) {
-          if (error) throw error;
+          if (error) reject(error);
           resolve(results)
         },
       );
