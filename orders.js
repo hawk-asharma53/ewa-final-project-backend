@@ -1,6 +1,8 @@
 import { buildResponse } from "./helper.functions.js";
 import orderService from "./services/order.service.js";
 import orderItemService from "./services/orderItem.service.js";
+import productService from "./services/product.service.js";
+import serviceService from "./services/service.service.js";
 
 const BASE_URL = '/api';
 const PLACE_ORDER = BASE_URL + '/placeOrder';
@@ -16,7 +18,22 @@ const GET_WEEKLY_REVENUE_BY_STORE = BASE_URL + '/weekelyRevenue/:storeId';
 async function addItemsToOrder( orders ) {
     for (let index = 0; index < orders.length; index++) {
         const element = orders[index];
-        element.orderItems = await orderItemService.getByOrderId(element.id)
+        var orderItems = await orderItemService.getByOrderId(element.id);
+        for (let index2 = 0; index2 < orderItems.length; index2++) {
+            const element2 = orderItems[index2];
+            var itemList = await productService.getByIds([element2.itemId]);
+            if (itemList.length > 0) {
+                element2.item = itemList[0];
+                element2.item_type = "Product";
+            } else {
+                itemList = await serviceService.getByIds([element2.itemId]);
+                if (itemList.length > 0) {
+                    element2.item = itemList[0];
+                    element2.item_type = "Service";
+                }
+            }
+        }
+        element.orderItems = orderItems;
     }
 }
 
