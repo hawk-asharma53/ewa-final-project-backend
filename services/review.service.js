@@ -16,6 +16,23 @@ async function addReview(review) {
   });
 }
 
-var reviewService = { addReview };
+async function findReviews( query ) {
+  return new Promise( async (resolve, reject) => {
+    var client = new MongoClient(mongoConfig.connectionString);
+    try {
+      var reviewsCollection = client.db("test").collection("reviews");
+      var cursor = reviewsCollection.find( query );
+      var reviews = [];
+      await cursor.forEach((item) => { reviews.push(item) });
+      resolve(reviews);
+    } catch (error) {
+      reject(error);
+    } finally {
+      await client.close();
+    }
+  });
+}
+
+var reviewService = { addReview, findReviews };
 
 export default reviewService;

@@ -17,4 +17,14 @@ export default function (app) {
         }
     });
 
+    app.post(GET_REVIEW_BY_IDS, async (request, response) => {
+        try {
+            const query = request.body;
+            var reviews = await reviewService.findReviews( query );
+            response.status(200).json(buildResponse(reviews)).end()
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
+        }
+    });
+
 }
