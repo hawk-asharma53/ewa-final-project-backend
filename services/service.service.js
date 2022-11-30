@@ -1,5 +1,6 @@
 import config from '../config/db.config.js';
 import { createConnection } from 'mysql2';
+import { v4 as uuidv4 } from 'uuid';
 
 async function getAll() {
   return new Promise((resolve, reject) => {
@@ -103,6 +104,71 @@ async function getServiceCountByStore( storeId ) {
   });
 }
 
-var serviceService = { getAll, getByIds, getByCategory, getServiceCount, getServiceCountByStore }
+async function createService(service) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      var id = uuidv4();
+      connection.query(
+        'Insert into services values (?,?,?,?,?,?,?,?)',
+        [
+          id,
+          service.title,
+          service.categoryid,
+          service.subcategory,
+          service.image,
+          service.rating,
+          service.price,
+          service.isActive
+        ],
+        function (error, results, fields) {
+          if (error) reject(error);
+          resolve(id);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function updateService(service) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        `Update services set 
+        title = ?,
+        categoryid = ?,
+        subcategory = ?,
+        image = ?,
+        price = ?,
+        isActive = ?
+        where id = ?;`,
+        [
+          service.title,
+          service.categoryid,
+          service.subcategory,
+          service.image,
+          service.price,
+          service.isActive,
+          service.id
+        ],
+        function (error, results, fields) {
+          if (error) reject(error);
+          resolve(true);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+var serviceService = { getAll, getByIds, getByCategory, getServiceCount, getServiceCountByStore, createService, updateService }
 
 export default serviceService;

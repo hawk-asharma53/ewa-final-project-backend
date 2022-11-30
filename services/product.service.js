@@ -72,16 +72,51 @@ async function createProduct(product) {
         [
           id,
           product.title,
-          product.categoryId,
+          product.categoryid,
           product.subcategory,
           product.image,
           product.rating,
           product.price,
-          product.isActivew
+          product.isActive
         ],
         function (error, results, fields) {
           if (error) reject(error);
           resolve(id);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function updateProduct(product) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        `Update products set 
+        title = ?,
+        categoryid = ?,
+        subcategory = ?,
+        image = ?,
+        price = ?,
+        isActive = ?
+        where id = ?;`,
+        [
+          product.title,
+          product.categoryid,
+          product.subcategory,
+          product.image,
+          product.price,
+          product.isActive,
+          product.id
+        ],
+        function (error, results, fields) {
+          if (error) reject(error);
+          resolve(true);
         },
       );
       connection.end();
@@ -130,6 +165,6 @@ async function getProductCountByStore( storeId ) {
   });
 }
 
-var productService = { getAll, getByIds, getByCategory, createProduct, getProductCount, getProductCountByStore }
+var productService = { getAll, getByIds, getByCategory, createProduct, getProductCount, getProductCountByStore, updateProduct }
 
 export default productService;
