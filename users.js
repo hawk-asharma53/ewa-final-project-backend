@@ -1,10 +1,14 @@
 import jwt from 'jsonwebtoken';
+import userService from './services/user.service.js';
+import {buildResponse} from "./helper.functions.js";
+
 
 const BASE_URL = '/api';
 const LOGIN = BASE_URL + '/login';
 const SIGN_UP = BASE_URL + '/signup';
 const PUT_USER = BASE_URL + '/users/:user_id';
 const GET_USER = BASE_URL + '/users/:user_id';
+const GET_USERS_BY_ID = BASE_URL + '/userbyId';
 
 const jwtSecretKey = 'csp_584_fall_2022_homeverse';
 const jwtExpiry = 20 * 60;
@@ -238,5 +242,19 @@ export default function (app, executeMySqlQuery) {
         }
       },
     );
+  });
+
+  app.post(GET_USERS_BY_ID, async (request, response) => {
+    try {
+        const ids = request.body;
+        if ( !Array.isArray(ids) ) {
+            response.status(400).json(buildResponse(null, 'Invalid input')).end()
+            return
+        }
+        var users = await userService.getByIds(ids);
+        response.status(200).json(buildResponse(users)).end()
+    } catch(error) {
+        response.status(500).json(buildResponse(null, error)).end()
+    }
   });
 }
