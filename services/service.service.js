@@ -68,8 +68,9 @@ async function getServiceCount( ) {
       connection.connect();
       connection.query(
         `Select a.itemId, s.title, a.quantity from
-        (select itemId, sum(quantity) as quantity  from ServiceCount sc group by itemId) as a
-        inner join services s on s.id = a.itemId`,
+        (select itemId, sum(quantity) as quantity from ItemCount sc group by itemId) as a
+        inner join services s on s.id = a.itemId
+        order by a.quantity desc`,
         function (error, results, fields) {
           if (error) reject(error);
           resolve(results)
@@ -89,8 +90,9 @@ async function getServiceCountByStore( storeId ) {
       connection.connect();
       connection.query(
         `Select a.itemId, s.title, a.quantity, a.storeId from
-        (select * from ServiceCount sc where storeId = ?) as a
-        inner join services s on s.id = a.itemId`,
+        (select * from ItemCount sc where storeId = ?) as a
+        inner join services s on s.id = a.itemId
+        order by a.quantity desc`,
         [storeId],
         function (error, results, fields) {
           if (error) reject(error);

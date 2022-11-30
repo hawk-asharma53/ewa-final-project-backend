@@ -188,6 +188,27 @@ async function getOngoingOrdersForDates(startDate, endDate) {
   });
 }
 
+async function getOngoingOrdersForDatesAndStore(startDate, endDate, storeId) {
+  return new Promise((resolve, reject) => {
+    try {
+      console.log(startDate);
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'Select * from orders where status in (?) and orderDate between ? and ? and storeId = ?',
+        [ongoingStatuses, startDate, endDate, storeId],
+        function (error, results, fields) {
+          if (error) reject(error);
+          resolve(results);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 async function getTotalRevenueForDate(startDate, endDate) {
   return new Promise((resolve, reject) => {
     try {
@@ -196,6 +217,26 @@ async function getTotalRevenueForDate(startDate, endDate) {
       connection.query(
         'Select sum(total) from orders where status in (?) and orderDate between ? and ?',
         [revenueStatuses, startDate, endDate],
+        function (error, results, fields) {
+          if (error) reject(error);
+          resolve(results);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function getTotalRevenueForDateAndStore(startDate, endDate, storeId) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'Select sum(total) from orders where status in (?) and orderDate between ? and ? and storeId = ?',
+        [revenueStatuses, startDate, endDate, storeId],
         function (error, results, fields) {
           if (error) reject(error);
           resolve(results);
@@ -256,7 +297,9 @@ var orderService = {
   getOverallOngoingOrders,
   getOverallOngoingOrdersByStore,
   getOngoingOrdersForDates,
+  getOngoingOrdersForDatesAndStore,
   getTotalRevenueForDate,
+  getTotalRevenueForDateAndStore,
   getWeeklyRevenue,
   getWeeklyRevenueByStore
 };
