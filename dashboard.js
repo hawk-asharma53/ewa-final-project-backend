@@ -7,6 +7,7 @@ import productService from './services/product.service.js';
 const BASE_URL = '/api';
 const DASHBOARD = BASE_URL + '/dashboard';
 const DASHBOARD_BY_STORE = BASE_URL + '/dashboard/:storeId';
+const SEARCH = BASE_URL + '/searchItem';
 
 export default function (app) {
   app.get(DASHBOARD, async (request, response) => {
@@ -98,6 +99,22 @@ export default function (app) {
         .end();
     } catch(error) {
       response.status(500).json(buildResponse(null, error)).end()
+    }
+  });
+
+  app.post(SEARCH, async (request, response) => {
+    try {
+        const queryString = request.body.queryString;
+        if ( queryString == null ) {
+            response.status(400).json(buildResponse(null, 'Invalid query')).end()
+            return
+        }
+        var items = await productService.searchItems(queryString);
+        response.status(200).json(buildResponse(items)).end();
+    } catch(error) {
+      console.log(error)     
+
+        response.status(500).json(buildResponse(null, error)).end()
     }
   });
 }
