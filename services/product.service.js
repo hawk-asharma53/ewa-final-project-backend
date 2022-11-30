@@ -171,6 +171,28 @@ async function getProductCountByStore( storeId ) {
   });
 }
 
-var productService = { getAll, getByIds, getByCategory, createProduct, getProductCount, getProductCountByStore, updateProduct }
+async function searchItems(queryString) {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        "select * from ProductsAndServices where title like ?",
+        [`%${queryString}%`],
+        function (error, results, fields) {
+          if (error) reject(error);
+          resolve(results)
+        },
+      );
+      connection.end();
+    } catch (error) { 
+      console.log(error)     
+      reject(error)
+    }
+  });
+  ;
+}
+
+var productService = { getAll, getByIds, getByCategory, createProduct, getProductCount, getProductCountByStore, updateProduct, searchItems }
 
 export default productService;
