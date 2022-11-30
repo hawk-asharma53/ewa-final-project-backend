@@ -54,7 +54,12 @@ Left Join orders o on oi.orderId = o.id
 Group by o.storeId, oi.itemId) as a
 Inner Join products p on a.itemId = p.id
 
-Create view ServiceCount as
+Create view ProductCount as
+select oi.itemId, sum(oi.quantity) as quantity, o.storeId  from orderItem oi
+Left Join orders o on oi.orderId = o.id
+Group by o.storeId, oi.itemId
+
+Create view ItemCount as
 select oi.itemId, sum(oi.quantity) as quantity, o.storeId  from orderItem oi
 Left Join orders o on oi.orderId = o.id
 Group by o.storeId, oi.itemId

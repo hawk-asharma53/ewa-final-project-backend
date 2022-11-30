@@ -132,7 +132,10 @@ async function getProductCount( ) {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
-        'select title, id, sum(quantity) as quantity from ProductCount group by id',
+        `Select a.itemId, p.title, a.quantity from
+        (select itemId, sum(quantity) as quantity from ItemCount sc group by itemId) as a
+        inner join products p on p.id = a.itemId
+        order by a.quantity desc`,
         function (error, results, fields) {
           if (error) reject(error);
           resolve(results)
@@ -151,7 +154,10 @@ async function getProductCountByStore( storeId ) {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
-        'select title, id, quantity from ProductCount where storeId = ?',
+        `Select a.itemId, p.title, a.quantity, a.storeId from
+        (select * from ItemCount sc where storeId = ?) as a
+        inner join products p on p.id = a.itemId
+        order by a.quantity desc`,
         [storeId],
         function (error, results, fields) {
           if (error) reject(error);
