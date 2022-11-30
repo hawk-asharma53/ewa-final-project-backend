@@ -3,6 +3,7 @@ import productService from "./services/product.service.js";
 
 const BASE_URL = '/api';
 const PRODUCTS = BASE_URL + '/product';
+const UPDATE_PRODUCT = BASE_URL + '/updateProduct';
 const GET_PRODUCTS_BY_IDS = BASE_URL + '/productById';
 const GET_PRODUCTS_BY_CATEGORY = BASE_URL + '/productByCategory/:catgoryId';
 const GET_SOLD_PRODUCT_COUNT = BASE_URL + '/productCount';
@@ -55,6 +56,20 @@ export default function (app) {
             }
             var id = await productService.createProduct(product);
             response.status(200).json(buildResponse(id)).end();
+        } catch(error) {
+            response.status(500).json(buildResponse(null, error)).end()
+        }
+    });
+
+    app.post(UPDATE_PRODUCT, async (request, response) => {
+        try {
+            const product = request.body;
+            if ( product == null ) {
+                response.status(400).json(buildResponse(null, 'Invalid input')).end()
+                return
+            }
+            await productService.updateProduct(product);
+            response.status(200).json(buildResponse(true)).end();
         } catch(error) {
             response.status(500).json(buildResponse(null, error)).end()
         }
