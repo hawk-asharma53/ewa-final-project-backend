@@ -9,6 +9,7 @@ const SIGN_UP = BASE_URL + '/signup';
 const PUT_USER = BASE_URL + '/users/:user_id';
 const GET_USER = BASE_URL + '/users/:user_id';
 const GET_USERS_BY_ID = BASE_URL + '/userbyId';
+const GET_ALL_USERS = BASE_URL + '/users';
 
 const jwtSecretKey = 'csp_584_fall_2022_homeverse';
 const jwtExpiry = 20 * 60;
@@ -252,6 +253,15 @@ export default function (app, executeMySqlQuery) {
             return
         }
         var users = await userService.getByIds(ids);
+        response.status(200).json(buildResponse(users)).end()
+    } catch(error) {
+        response.status(500).json(buildResponse(null, error)).end()
+    }
+  });
+
+  app.get(GET_ALL_USERS, async (request, response) => {
+    try {
+        var users = await userService.getAllUsers();
         response.status(200).json(buildResponse(users)).end()
     } catch(error) {
         response.status(500).json(buildResponse(null, error)).end()
