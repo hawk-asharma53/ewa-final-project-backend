@@ -108,7 +108,7 @@ export default function (app, executeMySqlQuery) {
           } else {
             executeMySqlQuery(
               'INSERT INTO users (user_first_name, user_last_name, user_email, user_password, user_type, storeId) VALUES (?, ?, ?, ?, ?, ?)',
-              [user_first_name, user_last_name, email, password, user_type],
+              [user_first_name, user_last_name, email, password, user_type, storeId],
               (error, _insertRows, _fields) => {
                 if (error) {
                   statusCode = 500;
