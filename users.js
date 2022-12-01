@@ -75,7 +75,7 @@ export default function (app, executeMySqlQuery) {
   });
 
   app.post(SIGN_UP, (request, response) => {
-    const { email, password, user_first_name, user_last_name, user_type } =
+    const { email, password, user_first_name, user_last_name, user_type, storeId } =
       request.body;
 
     let nodeResponse = {
@@ -107,8 +107,8 @@ export default function (app, executeMySqlQuery) {
             response.status(statusCode).json(nodeResponse).end();
           } else {
             executeMySqlQuery(
-              'INSERT INTO users (user_first_name, user_last_name, user_email, user_password, user_type) VALUES (?, ?, ?, ?, ?)',
-              [user_first_name, user_last_name, email, password, user_type],
+              'INSERT INTO users (user_first_name, user_last_name, user_email, user_password, user_type, storeId) VALUES (?, ?, ?, ?, ?, ?)',
+              [user_first_name, user_last_name, email, password, user_type, storeId],
               (error, _insertRows, _fields) => {
                 if (error) {
                   statusCode = 500;
@@ -150,6 +150,7 @@ export default function (app, executeMySqlQuery) {
       user_state,
       user_country,
       user_zip_code,
+      storeId
     } = request.body;
 
     let query = 'UPDATE users SET';
@@ -183,6 +184,10 @@ export default function (app, executeMySqlQuery) {
     if (user_zip_code) {
       query += ' user_zip_code = ?,';
       parameters.push(user_zip_code);
+    }
+    if (user_zip_code) {
+      query += ' storeId = ?,';
+      parameters.push(storeId);
     }
 
     if (parameters.length > 0) {
