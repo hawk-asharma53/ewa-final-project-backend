@@ -21,6 +21,25 @@ async function getByIds(ids) {
   });
 }
 
-var userService = { getByIds };
+async function getAllUsers() {
+  return new Promise((resolve, reject) => {
+    try {
+      var connection = createConnection(config);
+      connection.connect();
+      connection.query(
+        'Select * from users',
+        function (error, results, fields) {
+          if (error) reject(error);
+          resolve(results);
+        },
+      );
+      connection.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+var userService = { getByIds, getAllUsers };
 
 export default userService;
