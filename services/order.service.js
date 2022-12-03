@@ -93,7 +93,7 @@ async function getByStore(storeId) {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
-        'Select * from orders where storeId = ?',
+        'Select * from orders where storeId = ? order by orderDate desc',
         [storeId],
         function (error, results, fields) {
           if (error) reject(error);
@@ -113,7 +113,7 @@ async function getByUser(userId) {
       var connection = createConnection(config);
       connection.connect();
       connection.query(
-        'Select * from orders where userId = ?',
+        'Select * from orders where userId = ? order by orderDate desc',
         [userId],
         function (error, results, fields) {
           if (error) reject(error);
